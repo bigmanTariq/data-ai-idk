@@ -1,0 +1,242 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  isAdmin       Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  profile       UserProfile?
+  resources     Resource[]
+}
+
+// NextAuth models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// User profile with gamification elements
+model UserProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  level          Int      @default(1)
+  xp             Int      @default(0)
+  currentModuleId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentModule  Module?  @relation(fields: [currentModuleId], references: [id])
+  skillProficiencies UserSkillProficiency[]
+  activityProgress UserActivityProgress[]
+  apiKeys        UserApiKey[]
+}
+
+// Skill definition
+model Skill {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userProficiencies UserSkillProficiency[]
+  activitySkills    ActivitySkill[]
+}
+
+// Enum for skill proficiency levels
+enum ProficiencyLevel {
+  NOVICE
+  APPRENTICE
+  JOURNEYMAN
+  MASTER
+}
+
+// User's proficiency in a specific skill
+model UserSkillProficiency {
+  id             String           @id @default(cuid())
+  userId         String
+  skillId        String
+  proficiencyLevel ProficiencyLevel @default(NOVICE)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  userProfile    UserProfile      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill          Skill            @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
+}
+
+// Module (book chapter)
+model Module {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  order       Int      @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  activities  Activity[]
+  userProfiles UserProfile[]
+}
+
+// Enum for activity types
+enum ActivityType {
+  LEARN_QUIZ
+  PRACTICE_DRILL
+  APPLY_CHALLENGE
+  ASSESS_TEST
+}
+
+// Learning activity
+model Activity {
+  id          String       @id @default(cuid())
+  moduleId    String
+  title       String
+  description String
+  type        ActivityType
+  content     Json
+  xpReward    Int
+  order       Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  module      Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  userProgress UserActivityProgress[]
+  activitySkills ActivitySkill[]
+
+  @@unique([moduleId, order])
+}
+
+// Mapping between activities and skills
+model ActivitySkill {
+  id          String   @id @default(cuid())
+  activityId  String
+  skillId     String
+  createdAt   DateTime @default(now())
+
+  activity    Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  skill       Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([activityId, skillId])
+}
+
+// User's progress on activities
+model UserActivityProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  activityId  String
+  completed   Boolean  @default(false)
+  score       Int?
+  attempts    Int      @default(0)
+  lastAttempt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userProfile UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity    Activity    @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, activityId])
+}
+
+// User API keys for external services
+model UserApiKey {
+  id          String   @id @default(cuid())
+  userId      String
+  service     String   // e.g., "gemini"
+  encryptedKey String  // Encrypted API key
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userProfile UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, service])
+}
+
+// Resource categories for PDF files
+enum ResourceCategory {
+  DATA_SCIENCE
+  DATA_ANALYSIS
+  DATA_ENGINEERING
+  DATA_ARCHITECTURE
+  GENERAL
+}
+
+// PDF Resources model
+model Resource {
+  id          String           @id @default(cuid())
+  title       String
+  description String
+  fileName    String
+  fileSize    Int
+  fileType    String
+  filePath    String
+  category    ResourceCategory
+  uploadedById String
+  aiExplanation String?        // AI-generated explanation of the PDF content
+  aiProcessed Boolean          @default(false) // Whether the PDF has been processed by AI
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  uploadedBy  User             @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+}
+
+// AI-generated explanations for book concepts
+model ConceptExplanation {
+  conceptId   String
+  userId      String
+  explanation String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@id([conceptId, userId])
+}

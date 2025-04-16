@@ -1,0 +1,104 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog
+   /Pages 2 0 R
+>>
+endobj
+2 0 obj
+<< /Type /Pages
+   /Kids [3 0 R]
+   /Count 1
+>>
+endobj
+3 0 obj
+<< /Type /Page
+   /Parent 2 0 R
+   /Resources << /Font << /F1 4 0 R >> >>
+   /MediaBox [0 0 612 792]
+   /Contents 5 0 R
+>>
+endobj
+4 0 obj
+<< /Type /Font
+   /Subtype /Type1
+   /BaseFont /Helvetica
+>>
+endobj
+5 0 obj
+<< /Length 1200 >>
+stream
+BT
+/F1 24 Tf
+100 700 Td
+(Mathematical Foundations for Data Analysis) Tj
+/F1 12 Tf
+100 670 Td
+(This document covers essential mathematical concepts for data analysis:) Tj
+100 650 Td
+(1. Linear Algebra) Tj
+100 640 Td
+(   - Vectors: v = [v1, v2, ..., vn]) Tj
+100 630 Td
+(   - Matrices: A = [aij]) Tj
+100 620 Td
+(   - Eigenvalues and eigenvectors: Av = λv) Tj
+100 610 Td
+(   - Matrix decompositions: SVD, PCA) Tj
+100 600 Td
+(2. Calculus) Tj
+100 590 Td
+(   - Derivatives: f'(x) = lim[h→0] [f(x+h) - f(x)]/h) Tj
+100 580 Td
+(   - Partial derivatives: ∂f/∂x, ∂f/∂y) Tj
+100 570 Td
+(   - Gradients: ∇f = [∂f/∂x1, ∂f/∂x2, ..., ∂f/∂xn]) Tj
+100 560 Td
+(   - Integrals: ∫f(x)dx) Tj
+100 550 Td
+(3. Probability Theory) Tj
+100 540 Td
+(   - Probability distributions: P(X)) Tj
+100 530 Td
+(   - Expected value: E[X] = ∑x·P(X=x)) Tj
+100 520 Td
+(   - Variance: Var(X) = E[(X-μ)²]) Tj
+100 510 Td
+(   - Bayes' theorem: P(A|B) = P(B|A)·P(A)/P(B)) Tj
+100 500 Td
+(4. Statistics) Tj
+100 490 Td
+(   - Hypothesis testing: H₀ vs H₁) Tj
+100 480 Td
+(   - p-values and confidence intervals) Tj
+100 470 Td
+(   - t-tests, chi-square tests, ANOVA) Tj
+100 460 Td
+(   - Regression: y = β₀ + β₁x₁ + β₂x₂ + ... + ε) Tj
+100 450 Td
+(5. Optimization) Tj
+100 440 Td
+(   - Objective functions: min f(x) or max f(x)) Tj
+100 430 Td
+(   - Gradient descent: x_{t+1} = x_t - η∇f(x_t)) Tj
+100 420 Td
+(   - Lagrange multipliers: ∇f(x) = λ∇g(x)) Tj
+100 410 Td
+(   - Convex optimization: f(tx + (1-t)y) ≤ tf(x) + (1-t)f(y)) Tj
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f
+0000000009 00000 n
+0000000058 00000 n
+0000000115 00000 n
+0000000234 00000 n
+0000000302 00000 n
+trailer
+<< /Size 6
+   /Root 1 0 R
+>>
+startxref
+1552
+%%EOF
